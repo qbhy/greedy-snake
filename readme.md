@@ -18,6 +18,6 @@ s => 下,
 a => 左,   
 space(空格) => 加速,最高5速。
 
-![截图](./snake.png =100x100)
+![截图](./snake.png)
 
 96qbhy@gmail.com  
