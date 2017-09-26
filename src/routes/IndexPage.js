@@ -11,7 +11,10 @@ class IndexPage extends React.Component {
         this.state = {
             x: 30,
             y: 30,
-            speed: 1000,
+            speed: {
+                base: 1000,
+                super: 1,
+            },
             maps: [],
             snake: {
                 direction: {
@@ -34,6 +37,7 @@ class IndexPage extends React.Component {
         this.initGame();
     }
 
+    // 初始化游戏，计算各种初始值
     initGame() {
         const {x, y} = this.state,
             count = x * y,
@@ -54,19 +58,29 @@ class IndexPage extends React.Component {
         this.startGame();
     }
 
+    // 渲染表格
     renderMaps = (count, snake, food) => {
         const maps = [];
         for (let i = 0; i < count; i++) {
             maps.push({
-                type: is.inArray(i, snake.body) ? styles.snake : i === food ? styles.food : styles.null, //food
+                type: is.inArray(i, snake.body) ?
+                    (
+                        i === snake.body[0] ? styles.head : styles.snake
+                    ) :
+                    i === food ? styles.food : styles.null, //food
             });
         }
         return maps;
     };
 
+    /**
+     * 开始游戏需要做的工作
+     */
     startGame() {
-        const {speed, snake} = this.state;
-        console.log(snake);
+        const {snake, speed} = this.state;
+        /**
+         * 方向变换
+         */
         key('w', () => {
             if (snake.direction.prev !== 'bottom') {
                 snake.direction.next = 'top';
@@ -91,9 +105,18 @@ class IndexPage extends React.Component {
                 this.setState({snake});
             }
         });
-        this.next();
+        // 空格开启倍速
+        key('space', () => {
+            speed.super++;
+            if (speed.super > 3) {
+                speed.super = 1;
+            }
+            this.setState({speed});
+        });
+        this.next(); //开启游戏
     }
 
+    // 每一帧游戏
     next() {
         const {x, y, snake, rule, speed} = this.state,
             count = x * y;
@@ -102,10 +125,11 @@ class IndexPage extends React.Component {
             return alert("恭喜你，爆机啦~");
         }
         const next = snake.body[0] + rule[snake.direction.next];
-        // 判断有没有撞墙
+        // 判断有没有撞到自己
         if (is.inArray(next, snake.body)) {
             return this.gameOver("你撞到自己的身体啦！");
         }
+        // 判断是否有撞到墙
         switch (snake.direction.next) {
             case 'top':
                 if (next / x < 0) {
@@ -127,23 +151,24 @@ class IndexPage extends React.Component {
                     return this.gameOver("你撞到墙啦！");
                 }
                 break;
-
         }
+        // 前进一步
         snake.body.unshift(next);
-        if (next !== food) {
-            snake.body.pop();
+        if (next === food) {    // 判断是否吃到食物
+            food = this.randomFood(snake, count, food); // 食物被吃掉了，重新生成食物
         } else {
-            food = this.randomFood(snake, count, food);
+            snake.body.pop(); // 没迟到食物，收尾
         }
-        snake.direction.prev = snake.direction.next;
+        snake.direction.prev = snake.direction.next; // 处理方向
         this.setState({
             snake,
             maps: this.renderMaps(count, snake, food),
             food
         });
-        setTimeout(() => this.next(), speed - snake.body.length * 2);
+        setTimeout(() => this.next(), (speed.base - snake.body.length * 2) / speed.super); // 指定速度执行下一步。
     }
 
+    // 随机生成食物
     randomFood = (snake, count, food = null) => {
         let newFood = Math.floor(Math.random() * count);
         while (is.inArray(newFood, snake.body) || food === newFood) {
@@ -152,12 +177,10 @@ class IndexPage extends React.Component {
         return newFood;
     };
 
+    // 结束游戏
     gameOver(message) {
         alert(message + "游戏结束!");
     }
-
-
-
 
     render() {
         const {maps} = this.state;
