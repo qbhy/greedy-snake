@@ -4,7 +4,7 @@ import styles from './IndexPage.less';
 import classNames from 'classnames';
 import is from 'is_js';
 
-class IndexPage extends React.Component {
+class BigFighting extends React.Component {
     constructor(props) {
         super(props);
 
@@ -219,4 +219,4 @@ class IndexPage extends React.Component {
 
 IndexPage.propTypes = {};
 
-export default connect()(IndexPage);
+export default connect()(BigFighting);
