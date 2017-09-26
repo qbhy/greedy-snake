@@ -4,33 +4,49 @@ div {
 }
 
 .container {
-    height: 480px;
-    width: 480px;
-    background: #fff;
     display: flex;
-    flex-wrap: wrap;
-}
 
-.map {
-    height: 12px;
-    width: 12px;
-    margin: 1px;
-    display: block;
-    border: 1px solid #333;
-
-    &.snake {
-        background: #59ff38;
-    }
-
-    &.head {
-        background: blue;
-    }
-
-    &.null {
+    .snakeBox {
+        height: 480px;
+        width: 480px;
         background: #fff;
+        display: flex;
+        flex-wrap: wrap;
+
+        .map {
+            height: 12px;
+            width: 12px;
+            margin: 1px;
+            display: block;
+            border: 1px solid #333;
+
+            &.snake {
+                background: #59ff38;
+            }
+
+            &.head {
+                background: blue;
+            }
+
+            &.null {
+                background: #fff;
+            }
+
+            &.food {
+                background: red;
+            }
+        }
+
     }
 
-    &.food {
-        background: red;
+    .gameInfo {
+        flex: 1;
+        min-width: 150px;
+        background: #eee;
+        height: 480px;
+        overflow: auto;
+        padding: 15px;
+        box-sizing: border-box;
     }
+
 }

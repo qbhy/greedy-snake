@@ -29,7 +29,8 @@ class IndexPage extends React.Component {
                 bottom: 30,
                 left: -1
             },
-            food: 50
+            food: 50,
+            logs: []
         };
     }
 
@@ -108,9 +109,10 @@ class IndexPage extends React.Component {
         // 空格开启倍速
         key('space', () => {
             speed.super++;
-            if (speed.super > 3) {
+            if (speed.super > 5) {
                 speed.super = 1;
             }
+            this.state.logs.push("已加速，现在的速度是" + speed.super);
             this.setState({speed});
         });
         this.next(); //开启游戏
@@ -118,7 +120,7 @@ class IndexPage extends React.Component {
 
     // 每一帧游戏
     next() {
-        const {x, y, snake, rule, speed} = this.state,
+        const {x, y, snake, rule, speed, logs} = this.state,
             count = x * y;
         let food = this.state.food;
         if (snake.body.length >= count) {
@@ -156,6 +158,7 @@ class IndexPage extends React.Component {
         snake.body.unshift(next);
         if (next === food) {    // 判断是否吃到食物
             food = this.randomFood(snake, count, food); // 食物被吃掉了，重新生成食物
+            logs.push("吃到食物,体长 + 1, 现在的长度是" + snake.body.length);
         } else {
             snake.body.pop(); // 没迟到食物，收尾
         }
@@ -163,7 +166,8 @@ class IndexPage extends React.Component {
         this.setState({
             snake,
             maps: this.renderMaps(count, snake, food),
-            food
+            food,
+            logs
         });
         setTimeout(() => this.next(), (speed.base - snake.body.length * 2) / speed.super); // 指定速度执行下一步。
     }
@@ -179,18 +183,34 @@ class IndexPage extends React.Component {
 
     // 结束游戏
     gameOver(message) {
-        alert(message + "游戏结束!");
+        this.state.logs.push(message + "游戏结束!你的体长是: " + this.state.snake.body.length);
+        this.setState({});
     }
 
     render() {
-        const {maps} = this.state;
+        const {maps, logs} = this.state;
         return (
             <div className={styles.container}>
-                {maps.map((map, index) => {
-                    return (
-                        <div key={index} className={classNames(styles.map, map.type)}></div>
-                    )
-                })}
+                <div className={styles.snakeBox}>
+                    {maps.map((map, index) => {
+                        return (
+                            <div key={index} className={classNames(styles.map, map.type)}></div>
+                        )
+                    })}
+                </div>
+                <div className={styles.gameInfo}>
+                    {logs.map((log, index) => {
+                        return <p key={index}>{log}</p>
+                    })}
+                    <p>变换方向请按 WDSA, 加速请按空格</p>
+                    <button onClick={() => {
+                        this.initGame();
+                        setTimeout(() => {
+                            this.next();
+                        }, 300);
+                    }}>重新开始游戏
+                    </button>
+                </div>
             </div>
         );
     }
