@@ -3,8 +3,8 @@
 
 ## 运行游戏
 ```shell
-git clone https://github.com/96qbhy/greedy-snake-.git
-cd greedy-snake-
+git clone https://github.com/96qbhy/greedy-snake.git
+cd greedy-snake
 npm install
 npm start
 ```
@@ -17,5 +17,7 @@ d => 右,
 s => 下,  
 a => 左,   
 space(空格) => 加速,最高5速。
+
+![截图](./snake.png =100x100)
 
 96qbhy@gmail.com  
