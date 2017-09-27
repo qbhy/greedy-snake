@@ -9,7 +9,7 @@ class BigFighting extends React.Component {
         super(props);
 
         this.state = {
-            user: 'qbhy', // 独有
+            user: null, // 独有
             status: 'running',  // 正在运行游戏: running, 等待游戏开始: waiting
             x: 30,
             y: 30,
@@ -32,6 +32,9 @@ class BigFighting extends React.Component {
                 bottom: 30,
                 left: -1,
             },
+            spectators: [
+                '我是神经病'
+            ],
             food: [],
             maps: [],
             logs: [],
@@ -44,7 +47,7 @@ class BigFighting extends React.Component {
         setInterval(() => {
             this.ws.send(JSON.stringify({
                 action: '函数名',
-                args: "参数"
+                args: "参数",
             }));
         }, 3000);
 
@@ -60,7 +63,7 @@ class BigFighting extends React.Component {
                 direction: {
                     prev: 'right',
                     next: 'right',
-                }, //top,right,bottom,left
+                }, // top,right,bottom,left
             },
             food = this.randomFood(snake, count),
             maps = this.renderMaps(count, snake, food);
@@ -182,7 +185,7 @@ class BigFighting extends React.Component {
             food,
             logs
         });
-        this.timer = setTimeout(() => this.next(), (speed.base - snake.body.length * 2) / speed.super); // 指定速度执行下一步。
+        this.timer = setTimeout(() => this.next(), (speed - snake.body.length * 2) / speed.super); // 指定速度执行下一步。
     }
 
     // 随机生成食物
