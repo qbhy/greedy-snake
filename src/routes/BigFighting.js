@@ -9,32 +9,34 @@ class BigFighting extends React.Component {
         super(props);
 
         this.state = {
+            user: 'qbhy', // 独有
+            status: 'running',  // 正在运行游戏: running, 等待游戏开始: waiting
             x: 30,
             y: 30,
-            speed: {
-                base: 1000,
-                super: 1,
-            },
-            maps: [],
-            snake: {
-                direction: {
-                    prev: 'right',
-                    next: 'right',
-                },
-                body: []
-            },
+            speed: 1000,
+            snake: [
+                {
+                    status: 'watching', // 观战: watching, 等待开始游戏: waiting, 游戏中: playing
+                    name: '谢坚来',
+                    speed: 1,
+                    direction: {
+                        prev: 'right',
+                        next: 'right',
+                    },
+                    body: []
+                }
+            ],
             rule: {
                 top: -30,
                 right: 1,
                 bottom: 30,
-                left: -1
+                left: -1,
             },
-            food: 50,
-            logs: []
+            food: [],
+            maps: [],
+            logs: [],
         };
     }
-
-    ws = null;
 
     componentWillMount() {
         this.ws = new WebSocket("ws://localhost:8080/ws");
@@ -160,7 +162,7 @@ class BigFighting extends React.Component {
                 }
                 break;
             case 'left':
-                if (next % x === 29) {
+                if (next % x === x - 1) {
                     return this.gameOver("你撞到墙啦！");
                 }
                 break;
