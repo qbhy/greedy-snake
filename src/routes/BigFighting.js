@@ -34,7 +34,18 @@ class BigFighting extends React.Component {
         };
     }
 
+    ws = null;
+
     componentWillMount() {
+        this.ws = new WebSocket("ws://localhost:8080/ws");
+
+        setInterval(() => {
+            this.ws.send(JSON.stringify({
+                action: '函数名',
+                args: "参数"
+            }));
+        }, 3000);
+
         this.initGame();
     }
 
@@ -217,6 +228,5 @@ class BigFighting extends React.Component {
     }
 }
 
-IndexPage.propTypes = {};
 
 export default connect()(BigFighting);

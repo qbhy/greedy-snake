@@ -7,7 +7,7 @@ function RouterConfig({history}) {
     return (
         <Router history={history}>
             <Switch>
-                <Route path="/big-fighting" exact component={IndexPage}/>
+                <Route path="/big-fighting" exact component={BigFighting}/>
                 <Route path="*" exact component={IndexPage}/>
             </Switch>
         </Router>
