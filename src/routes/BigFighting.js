@@ -14,15 +14,13 @@ class BigFighting extends React.Component {
             x: 30,
             y: 30,
             speed: 1000,
-            snake: [
+            snakes: [
                 {
                     status: 'watching', // 观战: watching, 等待开始游戏: waiting, 游戏中: playing
                     name: '谢坚来',
                     speed: 1,
-                    direction: {
-                        prev: 'right',
-                        next: 'right',
-                    },
+                    prevDirection: 'right',
+                    nextDirection: 'right',
                     body: []
                 }
             ],
@@ -36,13 +34,17 @@ class BigFighting extends React.Component {
                 '我是神经病'
             ],
             food: [],
-            maps: [],
             logs: [],
+            maps: [], // 前端渲染，无需后端返回
         };
     }
 
     componentWillMount() {
         this.ws = new WebSocket("ws://localhost:8080/ws");
+
+        this.ws.onopen = () => {
+            this.exec('init');
+        };
 
         setInterval(() => {
             this.ws.send(JSON.stringify({
@@ -52,6 +54,13 @@ class BigFighting extends React.Component {
         }, 3000);
 
         this.initGame();
+    }
+
+    exec(action, args = null) {
+        this.ws.send(JSON.stringify({
+            action,
+            args
+        }));
     }
 
     // 初始化游戏，计算各种初始值
