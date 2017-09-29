@@ -19,9 +19,10 @@ class BigFighting extends React.Component {
                     status: 'watching', // 观战: watching, 等待开始游戏: waiting, 游戏中: playing
                     name: '谢坚来',
                     speed: 1,
+                    color: "red",
                     prevDirection: 'right',
                     nextDirection: 'right',
-                    body: []
+                    body: [],
                 }
             ],
             rule: {
@@ -44,16 +45,33 @@ class BigFighting extends React.Component {
 
         this.ws.onopen = () => {
             this.exec('init');
+
         };
 
-        setInterval(() => {
-            this.ws.send(JSON.stringify({
-                action: '函数名',
-                args: "参数",
-            }));
-        }, 3000);
+        this.ws.onmessage = ({data}) => {
+            this.handleResponse(JSON.parse(data));
+        };
 
-        this.initGame();
+        // setInterval(() => {
+        //     this.ws.send(JSON.stringify({
+        //         action: '函数名',
+        //         args: "参数",
+        //     }));
+        // }, 3000);
+    }
+
+    handleResponse(data) {
+        if (is.function(this[data.action])) {
+            this[data.action](data.data);
+        } else {
+            console.log("方法找不到", data);
+        }
+    }
+
+    setInitState(state) {
+        this.setState({...state}, () => {
+            this.initGame();
+        });
     }
 
     exec(action, args = null) {
@@ -63,38 +81,41 @@ class BigFighting extends React.Component {
         }));
     }
 
+
+
     // 初始化游戏，计算各种初始值
     initGame() {
-        const {x, y} = this.state,
+        const {x, y, snakes} = this.state,
             count = x * y,
-            snake = {
-                body: [5, 4, 3, 2, 1, 0],
-                direction: {
-                    prev: 'right',
-                    next: 'right',
-                }, // top,right,bottom,left
-            },
-            food = this.randomFood(snake, count),
-            maps = this.renderMaps(count, snake, food);
-
-        this.setState({maps, snake, food});
+            food = this.randomFood(snakes, count),
+            maps = this.renderMaps(count, snakes, food);
+        this.setState({maps, food});
     }
 
     componentDidMount() {
-        this.startGame();
+
     }
 
     // 渲染表格
-    renderMaps = (count, snake, food) => {
+    renderMaps = (count, snakes, foods) => {
         const maps = [];
         for (let i = 0; i < count; i++) {
-            maps.push({
-                type: is.inArray(i, snake.body) ?
-                    (
-                        i === snake.body[0] ? styles.head : styles.snake
-                    ) :
-                    i === food ? styles.food : styles.null, //food
-            });
+            for (let snake of snakes) {
+                let map = {
+                    type: styles.null,
+                    color: undefined,
+                };
+                if (is.inArray(i, snake.body)) {
+                    map = {
+                        type: i === snake.body[0] ? styles.head : styles.snake,
+                        color: snake.color,
+                    };
+                } else if (is.inArray(i, foods)) {
+                    map.type = styles.food;
+                }
+                maps.push(map);
+            }
+
         }
         return maps;
     };
@@ -217,11 +238,10 @@ class BigFighting extends React.Component {
         return (
             <div className={styles.container}>
                 <div className={styles.snakeBox}>
-                    {maps.map((map, index) => {
-                        return (
-                            <div key={index} className={classNames(styles.map, map.type)}></div>
-                        )
-                    })}
+                    {maps.map((map, index) => (
+                        <div key={index} style={{color: map.color}}
+                             className={classNames(styles.map, map.type)}></div>
+                    ))}
                 </div>
                 <div className={styles.gameInfo}>
                     {logs.map((log, index) => {
