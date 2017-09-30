@@ -115,7 +115,6 @@ class BigFighting extends React.Component {
                 }
                 maps.push(map);
             }
-
         }
         return maps;
     };
@@ -237,6 +236,9 @@ class BigFighting extends React.Component {
         const {maps, logs} = this.state;
         return (
             <div className={styles.container}>
+                <div className={styles.logsBox}>
+
+                </div>
                 <div className={styles.snakeBox}>
                     {maps.map((map, index) => (
                         <div key={index} style={{color: map.color}}
