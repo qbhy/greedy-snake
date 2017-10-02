@@ -10,7 +10,7 @@ class BigFighting extends React.Component {
 
         this.state = {
             user: null, // 独有
-            status: 'running',  // 正在运行游戏: running, 等待游戏开始: waiting
+            status: 'waiting',  // 正在运行游戏: running, 等待游戏开始: waiting
             x: 30,
             y: 30,
             speed: 1000,
@@ -52,12 +52,6 @@ class BigFighting extends React.Component {
             this.handleResponse(JSON.parse(data));
         };
 
-        // setInterval(() => {
-        //     this.ws.send(JSON.stringify({
-        //         action: '函数名',
-        //         args: "参数",
-        //     }));
-        // }, 3000);
     }
 
     handleResponse(data) {
@@ -80,7 +74,6 @@ class BigFighting extends React.Component {
             args
         }));
     }
-
 
 
     // 初始化游戏，计算各种初始值
@@ -165,7 +158,7 @@ class BigFighting extends React.Component {
 
     // 每一帧游戏
     next() {
-        const {x, y, snake, rule, speed, logs} = this.state,
+        const {x, y, snakes, rule, speed, logs} = this.state,
             count = x * y;
         let food = this.state.food;
         if (snake.body.length >= count) {
@@ -233,11 +226,13 @@ class BigFighting extends React.Component {
     }
 
     render() {
-        const {maps, logs} = this.state;
+        const {maps, logs, status} = this.state;
         return (
             <div className={styles.container}>
                 <div className={styles.logsBox}>
-
+                    {logs.map((log, index) => {
+                        return <p key={index}>{log}</p>
+                    })}
                 </div>
                 <div className={styles.snakeBox}>
                     {maps.map((map, index) => (
@@ -246,9 +241,7 @@ class BigFighting extends React.Component {
                     ))}
                 </div>
                 <div className={styles.gameInfo}>
-                    {logs.map((log, index) => {
-                        return <p key={index}>{log}</p>
-                    })}
+                    {status === 'waiting' ? '等待游戏开始' : '游戏中'}
                     <p>变换方向请按 WDSA, 加速请按空格</p>
                     <button onClick={() => {
                         clearInterval(this.timer);
@@ -257,6 +250,10 @@ class BigFighting extends React.Component {
                             this.next();
                         }, 300);
                     }}>重新开始游戏
+                    </button>
+                    <button onClick={() => {
+                        this.exec('startGame')
+                    }}>开始游戏
                     </button>
                 </div>
             </div>
