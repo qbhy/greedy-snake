@@ -3,6 +3,9 @@ import {connect} from 'dva';
 import styles from './IndexPage.less';
 import classNames from 'classnames';
 import is from 'is_js';
+import {
+    message
+} from 'antd';
 
 class BigFighting extends React.Component {
     constructor(props) {
@@ -44,7 +47,7 @@ class BigFighting extends React.Component {
         this.ws = new WebSocket("ws://localhost:8080/ws");
 
         this.ws.onopen = () => {
-            this.exec('init');
+            // this.exec('init');
 
         };
 
@@ -86,7 +89,7 @@ class BigFighting extends React.Component {
     }
 
     componentDidMount() {
-
+        message.info("componentDidMount");
     }
 
     // 渲染表格
@@ -226,7 +229,16 @@ class BigFighting extends React.Component {
     }
 
     render() {
-        const {maps, logs, status} = this.state;
+        const {maps, logs, status, user} = this.state;
+        if (is.null(user)) {
+            return (
+                <div>
+                    请输入您的昵称
+                    <input type="text" ref={ref => this.userInput = ref}/>
+                    <button>确定</button>
+                </div>
+            );
+        }
         return (
             <div className={styles.container}>
                 <div className={styles.logsBox}>
