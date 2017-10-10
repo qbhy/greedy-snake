@@ -115,9 +115,7 @@ class BigFighting extends React.Component {
         return maps;
     };
 
-    /**
-     * 开始游戏需要做的工作
-     */
+    // 开始游戏需要做的工作
     startGame() {
         const {snake, speed} = this.state;
         /**
