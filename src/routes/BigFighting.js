@@ -3,6 +3,7 @@ import {connect} from 'dva';
 import styles from './IndexPage.less';
 import classNames from 'classnames';
 import is from 'is_js';
+import {delay} from '../utils';
 import {
     message
 } from 'antd';
@@ -48,13 +49,17 @@ class BigFighting extends React.Component {
 
         this.ws.onopen = () => {
             // this.exec('init');
+        };
 
+        this.ws.onclose = () => {
+            delay().then(() => {
+                // this.ws = new WebSocket("ws://localhost:8080/ws");
+            });
         };
 
         this.ws.onmessage = ({data}) => {
             this.handleResponse(JSON.parse(data));
         };
-
     }
 
     handleResponse(data) {
@@ -63,6 +68,10 @@ class BigFighting extends React.Component {
         } else {
             console.log("方法找不到", data);
         }
+    }
+
+    HandleError(msg){
+        message.error(msg);
     }
 
     setInitState(state) {
@@ -89,7 +98,6 @@ class BigFighting extends React.Component {
     }
 
     componentDidMount() {
-        message.info("componentDidMount");
     }
 
     // 渲染表格
@@ -226,6 +234,14 @@ class BigFighting extends React.Component {
         this.setState({});
     }
 
+    initName() {
+        this.exec('initName', this.userInput.value);
+    }
+
+    SetName(name) {
+        console.log(name);
+    }
+
     render() {
         const {maps, logs, status, user} = this.state;
         if (is.null(user)) {
@@ -233,7 +249,7 @@ class BigFighting extends React.Component {
                 <div>
                     请输入您的昵称
                     <input type="text" ref={ref => this.userInput = ref}/>
-                    <button>确定</button>
+                    <button onClick={() => this.initName()}>确定</button>
                 </div>
             );
         }
