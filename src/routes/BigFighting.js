@@ -70,34 +70,18 @@ class BigFighting extends React.Component {
         }
     }
 
-    HandleError(msg){
+    HandleError(msg) {
         message.error(msg);
     }
 
-    setInitState(state) {
+    SetInitState(state) {
         this.setState({...state}, () => {
             this.initGame();
         });
     }
 
     exec(action, args = null) {
-        this.ws.send(JSON.stringify({
-            action,
-            args
-        }));
-    }
-
-
-    // 初始化游戏，计算各种初始值
-    initGame() {
-        const {x, y, snakes} = this.state,
-            count = x * y,
-            food = this.randomFood(snakes, count),
-            maps = this.renderMaps(count, snakes, food);
-        this.setState({maps, food});
-    }
-
-    componentDidMount() {
+        this.ws.send(JSON.stringify({action, args}));
     }
 
     // 渲染表格
@@ -124,11 +108,9 @@ class BigFighting extends React.Component {
     };
 
     // 开始游戏需要做的工作
-    startGame() {
+    StartGame() {
         const {snake, speed} = this.state;
-        /**
-         * 方向变换
-         */
+        //  方向变换
         key('w', () => {
             if (snake.direction.prev !== 'bottom') {
                 snake.direction.next = 'top';
@@ -162,7 +144,6 @@ class BigFighting extends React.Component {
             this.state.logs.push("已加速，现在的速度是" + speed.super);
             this.setState({speed});
         });
-        this.next(); //开启游戏
     }
 
     // 每一帧游戏
@@ -238,8 +219,8 @@ class BigFighting extends React.Component {
         this.exec('initName', this.userInput.value);
     }
 
-    SetName(name) {
-        console.log(name);
+    SetName(user) {
+        this.setState({user});
     }
 
     render() {
@@ -278,7 +259,7 @@ class BigFighting extends React.Component {
                     }}>重新开始游戏
                     </button>
                     <button onClick={() => {
-                        this.exec('startGame')
+                        this.exec('StartGame')
                     }}>开始游戏
                     </button>
                 </div>
