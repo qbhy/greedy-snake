@@ -35,9 +35,7 @@ class BigFighting extends React.Component {
                 bottom: 30,
                 left: -1,
             },
-            spectators: [
-                '我是神经病'
-            ],
+            spectators: [],
             food: [],
             logs: [],
             maps: [], // 前端渲染，无需后端返回
@@ -73,7 +71,7 @@ class BigFighting extends React.Component {
 
     SetInitState(state) {
         this.setState({...state}, () => {
-            this.initGame();
+            this.InitGame();
         });
     }
 
@@ -82,14 +80,20 @@ class BigFighting extends React.Component {
     }
 
     // 渲染表格
-    renderMaps = (count, snakes, foods) => {
-        const maps = [];
+    renderMaps(state = null) {
+        state = state || this.state;
+        const maps = [],
+            {x, y, snakes, foods} = state,
+            count = x * y;
+        let snake;
         for (let i = 0; i < count; i++) {
-            for (let snake of snakes) {
-                let map = {
-                    type: styles.null,
-                    color: undefined,
-                };
+            let map = {
+                type: styles.null,
+                color: undefined,
+            };
+            for (let user in snakes) {
+                snake = snakes[user];
+
                 if (is.inArray(i, snake.body)) {
                     map = {
                         type: i === snake.body[0] ? styles.head : styles.snake,
@@ -98,8 +102,9 @@ class BigFighting extends React.Component {
                 } else if (is.inArray(i, foods)) {
                     map.type = styles.food;
                 }
-                maps.push(map);
             }
+            maps.push(map);
+
         }
         return maps;
     };
@@ -213,15 +218,38 @@ class BigFighting extends React.Component {
     }
 
     initName() {
-        this.exec('initName', this.userInput.value);
+        this.exec('InitGame', this.userInput.value);
     }
 
-    SetName(user) {
-        this.setState({user});
+    InitName(name) {
+        this.setState({user: name});
+    }
+
+    SetRoomInfo(state) {
+        this.setState({
+            ...state,
+            maps: this.renderMaps(state)
+        });
+    }
+
+    AddLog(log) {
+        this.state.logs.push(log);
+        this.setState({}, () => {
+            this.contentInput.focus();
+        });
+    }
+
+    sendLog() {
+        if (this.contentInput.value.length > 0) {
+            this.exec('AddLog', this.contentInput.value);
+            return this.contentInput.value = '';
+        }
+        message.warning('请输入内容在发送');
+        this.contentInput.focus();
     }
 
     render() {
-        const {maps, logs, status, user} = this.state;
+        const {maps, logs, status, user, x, y} = this.state;
         if (is.null(user)) {
             return (
                 <div>
@@ -233,20 +261,37 @@ class BigFighting extends React.Component {
         }
         return (
             <div className={styles.container}>
-                <div className={styles.logsBox}>
-                    {logs.map((log, index) => {
-                        return <p key={index}>{log}</p>
-                    })}
-                </div>
-                <div className={styles.snakeBox}>
+
+                <div style={{
+                    width: 16 * x,
+                    height: 16 * y,
+                }} className={styles.snakeBox}>
                     {maps.map((map, index) => (
-                        <div key={index} style={{color: map.color}}
-                             className={classNames(styles.map, map.type)}></div>
+                        <div key={index} style={{background: map.color}} className={classNames(styles.map, map.type)}>
+                        </div>
                     ))}
                 </div>
-                <div className={styles.gameInfo}>
-                    {status === 'waiting' ? '等待游戏开始' : '游戏中'}
-                    <p>变换方向请按 WDSA, 加速请按空格</p>
+
+                <div style={{
+                    height: 16 * y,
+                }} className={styles.gameInfo}>
+                    <header>
+                        贪吃蛇大作战 - {user} - {status === 'waiting' ?
+                        (
+                            <button onClick={() => this.exec('Ready')}>开始游戏</button>
+                        ) : '游戏进行中'}
+                    </header>
+                    <section>
+                        <div className={styles.logs}>
+                            {logs.map((log, index) => {
+                                return <p key={index}>{log}</p>
+                            })}
+                        </div>
+                        <div className={styles.actions}>
+                            <textarea ref={ref => this.contentInput = ref}>{null}</textarea>
+                            <button onClick={() => this.sendLog()}>发送消息</button>
+                        </div>
+                    </section>
                 </div>
             </div>
         );

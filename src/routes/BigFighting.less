@@ -21,6 +21,7 @@ div {
             border: 1px solid #333;
             line-height: 12px;
             box-sizing: content-box;
+            opacity: .6;
 
             &.snake {
                 background: #59ff38;
@@ -28,6 +29,7 @@ div {
 
             &.head {
                 background: blue;
+                opacity: 1;
             }
 
             &.null {
@@ -49,6 +51,52 @@ div {
         overflow: auto;
         padding: 15px;
         box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+
+        header {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #333;
+        }
+
+        section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+
+            .logs {
+                flex: 1;
+                overflow: auto;
+                padding: 7px 0;
+            }
+
+            .actions {
+                background: #00a854;
+                height: 120px;
+                display: flex;
+
+                textarea {
+                    flex: 1;
+                    height: 120px;
+                    outline: none;
+                    padding: 8px;
+                }
+
+                button {
+                    padding: 7px 8px;
+                    border: none;
+                    outline: none;
+                    background: #ffbf00;
+                    border-radius: 3px;
+                    cursor: pointer;
+                }
+
+            }
+        }
+
     }
 
 }
