@@ -8,9 +8,12 @@ class IndexPage extends React.Component {
     constructor(props) {
         super(props);
 
+        const x = 70,
+            y = 40;
+
         this.state = {
-            x: 30,
-            y: 30,
+            x,
+            y,
             speed: {
                 base: 1000,
                 super: 1,
@@ -24,9 +27,9 @@ class IndexPage extends React.Component {
                 body: []
             },
             rule: {
-                top: -30,
+                top: -x,
                 right: 1,
-                bottom: 30,
+                bottom: x,
                 left: -1
             },
             food: 50,
@@ -144,12 +147,12 @@ class IndexPage extends React.Component {
                 }
                 break;
             case 'bottom':
-                if (next / x > x) {
+                if (next / x > y) {
                     return this.gameOver("你撞到墙啦！");
                 }
                 break;
             case 'left':
-                if (next % x === 29) {
+                if (next % x === (x - 1)) {
                     return this.gameOver("你撞到墙啦！");
                 }
                 break;
@@ -188,10 +191,13 @@ class IndexPage extends React.Component {
     }
 
     render() {
-        const {maps, logs} = this.state;
+        const {maps, logs, x, y} = this.state;
         return (
             <div className={styles.container}>
-                <div className={styles.snakeBox}>
+                <div style={{
+                    width: 16 * x,
+                    height: 16 * y,
+                }} className={styles.snakeBox}>
                     {maps.map((map, index) => {
                         return (
                             <div key={index} className={classNames(styles.map, map.type)}></div>

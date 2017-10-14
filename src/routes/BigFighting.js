@@ -1,6 +1,6 @@
 import React from 'react';
 import {connect} from 'dva';
-import styles from './IndexPage.less';
+import styles from './BigFighting.less';
 import classNames from 'classnames';
 import is from 'is_js';
 import {delay} from '../utils';

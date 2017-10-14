@@ -6,17 +6,13 @@ div {
 .container {
     display: flex;
 
-    .logsBox {
-        flex: 1;
-        min-width: 150px;
-        height: 480px;
-        background: #59ff38;
-    }
-
     .snakeBox {
-        height: 16 * 30px;
-        width: 16 * 30px;
+        width: 0;
         background: #fff;
+        display: flex;
+        flex-wrap: wrap;
+        transition: all .3s ease;
+
 
         .map {
             height: 12px;
@@ -25,8 +21,6 @@ div {
             display: block;
             border: 1px solid #333;
             line-height: 12px;
-            box-sizing: content-box;
-            float: left;
 
             &.snake {
                 background: #59ff38;
@@ -51,7 +45,7 @@ div {
         flex: 1;
         min-width: 150px;
         background: #eee;
-        height: 16 * 30px;
+        height: 480px;
         overflow: auto;
         padding: 15px;
         box-sizing: border-box;
