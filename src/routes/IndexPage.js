@@ -204,7 +204,9 @@ class IndexPage extends React.Component {
                         )
                     })}
                 </div>
-                <div className={styles.gameInfo}>
+                <div style={{
+                    height: 16 * y,
+                }} className={styles.gameInfo}>
                     {logs.map((log, index) => {
                         return <p key={index}>{log}</p>
                     })}

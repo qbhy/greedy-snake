@@ -52,9 +52,7 @@ class BigFighting extends React.Component {
         };
 
         this.ws.onclose = () => {
-            delay().then(() => {
-                // this.ws = new WebSocket("ws://localhost:8080/ws");
-            });
+            message.warning("链接已断开,请检查你的网络！");
         };
 
         this.ws.onmessage = ({data}) => {
@@ -66,13 +64,12 @@ class BigFighting extends React.Component {
         if (is.function(this[data.action])) {
             this[data.action](data.data);
         } else {
-            console.log("方法找不到", data);
+            message.error(data.action + "方法找不到");
+            console.log(data.action + "方法找不到", data);
         }
     }
 
-    HandleError(msg) {
-        message.error(msg);
-    }
+    HandleError = msg => message.error(msg);
 
     SetInitState(state) {
         this.setState({...state}, () => {
@@ -250,18 +247,6 @@ class BigFighting extends React.Component {
                 <div className={styles.gameInfo}>
                     {status === 'waiting' ? '等待游戏开始' : '游戏中'}
                     <p>变换方向请按 WDSA, 加速请按空格</p>
-                    <button onClick={() => {
-                        clearInterval(this.timer);
-                        this.initGame();
-                        setTimeout(() => {
-                            this.next();
-                        }, 300);
-                    }}>重新开始游戏
-                    </button>
-                    <button onClick={() => {
-                        this.exec('StartGame')
-                    }}>开始游戏
-                    </button>
                 </div>
             </div>
         );
