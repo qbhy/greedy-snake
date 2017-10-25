@@ -69,6 +69,8 @@ class BigFighting extends React.Component {
 
     HandleError = msg => message.error(msg);
 
+    ShowMessage = msg => message.info(msg);
+
     SetInitState(state) {
         this.setState({...state}, () => {
             this.InitGame();
@@ -249,7 +251,8 @@ class BigFighting extends React.Component {
     }
 
     render() {
-        const {maps, logs, status, user, x, y} = this.state;
+        const {maps, logs, status, user, x, y, snakes} = this.state,
+            snake = snakes[user];
         if (is.null(user)) {
             return (
                 <div>
@@ -275,10 +278,12 @@ class BigFighting extends React.Component {
                 <div style={{
                     height: 16 * y,
                 }} className={styles.gameInfo}>
-                    <header>
+                    <header  style={{color: snake ? snake.color : '#333'}}>
                         贪吃蛇大作战 - {user} - {status === 'waiting' ?
                         (
-                            <button onClick={() => this.exec('Ready')}>开始游戏</button>
+                            (
+                                snakes[user] ? '已准备' : <button onClick={() => this.exec('Ready')}>开始游戏</button>
+                            )
                         ) : '游戏进行中'}
                     </header>
                     <section>
