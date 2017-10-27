@@ -73,7 +73,6 @@ class BigFighting extends React.Component {
 
     SetInitState(state) {
         this.setState({...state}, () => {
-            this.InitGame();
         });
     }
 
