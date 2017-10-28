@@ -8,6 +8,10 @@ import {
     message
 } from 'antd';
 
+const WAITING = 'waiting';
+const READY = 'ready';
+const RUNNING = 'running';
+
 class BigFighting extends React.Component {
     constructor(props) {
         super(props);
@@ -20,7 +24,7 @@ class BigFighting extends React.Component {
             speed: 1000,
             snakes: [
                 {
-                    status: 'watching', // 观战: watching, 等待开始游戏: waiting, 游戏中: playing
+                    status: 'waiting', // 等待开始游戏: waiting, 游戏中: playing
                     name: '谢坚来',
                     speed: 1,
                     color: "red",
@@ -111,8 +115,9 @@ class BigFighting extends React.Component {
     };
 
     // 开始游戏需要做的工作
-    StartGame() {
-        const {snake, speed} = this.state;
+    StartGame(state) {
+        this.SetRoomInfo(state);
+
         //  方向变换
         key('w', () => {
             if (snake.direction.prev !== 'bottom') {
@@ -140,12 +145,7 @@ class BigFighting extends React.Component {
         });
         // 空格开启倍速
         key('space', () => {
-            speed.super++;
-            if (speed.super > 5) {
-                speed.super = 1;
-            }
-            this.state.logs.push("已加速，现在的速度是" + speed.super);
-            this.setState({speed});
+
         });
     }
 
@@ -277,11 +277,15 @@ class BigFighting extends React.Component {
                 <div style={{
                     height: 16 * y,
                 }} className={styles.gameInfo}>
-                    <header  style={{color: snake ? snake.color : '#333'}}>
+                    <header style={{color: snake ? snake.color : '#333'}}>
                         贪吃蛇大作战 - {user} - {status === 'waiting' ?
                         (
                             (
-                                snakes[user] ? '已准备' : <button onClick={() => this.exec('Ready')}>开始游戏</button>
+                                snakes[user] ? (
+                                    snakes[user].status !== READY ? (
+                                        <button onClick={() => this.exec('Ready')}>准备</button>
+                                    ) : '已准备'
+                                ) : <button onClick={() => this.exec('Entry')}>加入游戏</button>
                             )
                         ) : '游戏进行中'}
                     </header>
