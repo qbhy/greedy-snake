@@ -18,7 +18,7 @@ s => 下,
 a => 左,   
 space(空格) => 加速,最高5速。
 
-[在线试玩](https://96qbhy.github.io/greedy-snake/dist/)
+[在线试玩](https://qbhy.github.io/greedy-snake/dist/)
 
 ![截图](./snake.png)
 
